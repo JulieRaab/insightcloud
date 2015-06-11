@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
 
     <description>
-        Example application for consuming the UVI REST API
+        Example application for consuming the DigitalGlobe UVI REST API
     </description>
 
     <properties>
