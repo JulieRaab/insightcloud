@@ -57,6 +57,16 @@ public class TwitterAggregationsSample {
             + "query=omg&"///the KEYWORD
             + "dimensions=geohash";
     
+    //query is optional on all these
+    //rolup of hahstag density in the bbox
+    
+    String hashtagAggExample="https://iipbeta.digitalglobe.com/monocle-3/app/broker/sma/sma/twitter/tweets?bbox=-78.086426,38.470804,-76.88916,39.314123&datetimerange=2015-04-20T05:00:00.000Z,2015-04-20T17:00:00.000Z&query=omg&dimensions=hashtag";
+    //rolls up the signifiant terms within your bbox
+    String signficantTermsExample ="https://iipbeta.digitalglobe.com/monocle-3/app/broker/sma/sma/twitter/tweets?bbox=-78.086426,38.470804,-76.88916,39.314123&datetimerange=2015-04-20T05:00:00.000Z,2015-04-20T17:00:00.000Z&query=omg&dimensions=term";    
+   //rols up the top ten trending things in your bbox (sentiment, users, hashtags, devices, languages, etc)
+    String topTen ="https://iipbeta.digitalglobe.com/monocle-3/app/broker/sma/sma/twitter/tweets?bbox=-78.086426,38.470804,-76.88916,39.314123&datetimerange=2015-04-20T05:00:00.000Z,2015-04-20T17:00:00.000Z&query=omg&dimensions=topten";    
+
+    
     JSONObject tweetAggs = (JSONObject) JSONValue.parse(jsonStringOfTweetAggs);
     client.logout();
     //go nuts with it... this is what you will get back. The lat and lon averages can be used to plot a center of mass of the tweets in each geohash grid box
