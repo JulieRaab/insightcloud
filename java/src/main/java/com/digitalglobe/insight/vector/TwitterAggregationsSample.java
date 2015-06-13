@@ -29,8 +29,8 @@ public class TwitterAggregationsSample {
 
     // authentication information
     String authService = props.getAuthService();
-    String username = "mark.giaconia";
-    String password = "!nsightC!oud";
+    String username = "un";
+    String password = "pw";
 
     // the base URL for accessing the vector service
     String appService = props.getAppService();
