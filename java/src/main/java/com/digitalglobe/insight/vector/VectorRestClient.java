@@ -3,9 +3,11 @@ package com.digitalglobe.insight.vector;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.rmi.server.ExportException;
 import java.util.HashMap;
 import java.util.Map;
@@ -167,6 +170,7 @@ public class VectorRestClient
    */
   public void authenticateClient( String serviceUrl, String serviceTicket) throws IOException
   {
+    System.out.println( "Authenticating client with URL: " + serviceUrl );
     GetMethod method = new GetMethod( serviceUrl );
     method.setQueryString( new NameValuePair[]{new NameValuePair( "ticket", serviceTicket )} );
     try
@@ -209,6 +213,69 @@ public class VectorRestClient
       {
         String msg = "Invalid response code (" + method.getStatusCode()
                       + ") from application!" + "\nResponse: " + response;
+        throw new RuntimeException( msg );
+      }
+      return response;
+    }
+    finally
+    {
+      method.releaseConnection();
+    }
+  }
+
+  /**
+   * Execute a POST request against the provided URL.  This method assumes an
+   * already authenticated HttpClient which has stored the session cookie.
+   * @param url the URL to execute
+   * @param body the body of the request to send
+   * @return a String holding the response body
+   */
+  public String executePost( String url, String body ) throws IOException
+  {
+    System.out.println( "Posting to URL: " + url );
+    PostMethod method = new PostMethod( url );
+    method.setRequestHeader( new Header( "Content-Type", "application/json" ) );
+    method.setRequestHeader( new Header( "Accept", "application/json" ) );
+
+    RequestEntity entity = new ByteArrayRequestEntity( body.getBytes( "UTF-8") );
+    method.setRequestEntity( entity );
+
+    try
+    {
+      this.httpClient.executeMethod( method );
+      String response = method.getResponseBodyAsString();
+      if ( method.getStatusCode() != 201 )
+      {
+        String msg = "Invalid response code (" + method.getStatusCode()
+            + ") from application!" + "\nResponse: " + response;
+        throw new RuntimeException( msg );
+      }
+      return response;
+    }
+    finally
+    {
+      method.releaseConnection();
+    }
+  }
+
+  /**
+   * Execute a DELETE request against the provided URL.  This method assumes an
+   * already authenticated HttpClient which has stored the session cookie.
+   * @param url the URL to execute
+   * @return a String holding the response body
+   */
+  public String executeDelete( String url ) throws IOException
+  {
+    System.out.println( "Deleting from URL: " + url );
+    DeleteMethod method = new DeleteMethod( url );
+    try
+    {
+      this.httpClient.executeMethod( method );
+      String response = method.getResponseBodyAsString();
+      if ( method.getStatusCode() != 204 )
+      {
+        String msg = "Invalid response code (" + method.getStatusCode()
+            + ") from application!" + "\nResponse: " + response;
         throw new RuntimeException( msg );
       }
       return response;
